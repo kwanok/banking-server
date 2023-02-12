@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  mysql:
+    networks:
+      - numble-banking-network
+    image: mysql:8.0
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    environment:
+      MYSQL_ROOT_PASSWORD: qsWWNdb8XKN4EKRW
+      MYSQL_DATABASE: banking-db
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: eZkRv7nG786pcyr3
+    ports:
+      - "3306:3306"
+
+networks:
+  numble-banking-network:
+    external: true
+    driver: bridge

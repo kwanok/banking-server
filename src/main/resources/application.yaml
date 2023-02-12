@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: db_user
+    password: eZkRv7nG786pcyr3
+    url: jdbc:mysql://127.0.0.1:3306/banking-db
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
+  security:
+    user:
+      name: admin
+      password: admin
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+jwt:
+  secret: prographyabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz
