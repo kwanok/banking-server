@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service
 class CustomUserDetailsService(
     private val userRepository: UserRepository,
 ): UserDetailsService {
-    override fun loadUserByUsername(username: String?): UserDetails {
-        return userRepository.findByEmail(username!!)!!
+    override fun loadUserByUsername(username: String): UserDetails {
+        return userRepository.findByEmail(username).first()
     }
 
 }

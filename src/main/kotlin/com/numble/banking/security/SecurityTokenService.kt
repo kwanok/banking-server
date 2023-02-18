@@ -22,25 +22,25 @@ class SecurityTokenService {
             .compact()
     }
 
-    fun <T> extractClaim(token: String, claimsResolver: Function<Claims?, T>): T {
+    fun <T> extractClaim(token: String, claimsResolver: Function<Claims, T>): T {
         val claims = extractAllClaims(token)
         return claimsResolver.apply(claims)
     }
 
     fun getUsername(token: String): String {
-        return extractClaim(token) { obj: Claims? -> obj!!.subject }
+        return extractClaim(token, Claims::getSubject)
     }
 
     fun isTokenExpired(token: String): Boolean {
-        return extractExpiration(token).before(Date())
+        return extractExpiration(token)?.before(Date()) ?: false
     }
 
-    fun isTokenValid(token: String?, userDetails: UserDetails): Boolean {
-        val username = getUsername(token!!)
+    fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
+        val username = getUsername(token)
         return username == userDetails.username && !isTokenExpired(token)
     }
 
-    private fun extractAllClaims(token: String): Claims? {
+    private fun extractAllClaims(token: String): Claims {
         return Jwts
             .parserBuilder()
             .setSigningKey(getSignInKey())
@@ -49,11 +49,11 @@ class SecurityTokenService {
             .body
     }
 
-    private fun extractExpiration(token: String): Date {
-        return extractClaim(token) { obj: Claims? -> obj!!.expiration }
+    private fun extractExpiration(token: String): Date? {
+        return extractClaim(token, Claims::getExpiration)
     }
 
-    private fun getSignInKey(): Key? {
+    private fun getSignInKey(): Key {
         val keyBytes = Decoders.BASE64.decode("SECRETKESECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYY")
         return Keys.hmacShaKeyFor(keyBytes)
     }

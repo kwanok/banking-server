@@ -26,7 +26,7 @@ class AuthService(
     }
 
     fun login(request: LoginRequest): String {
-        val user = userRepository.findByEmail(request.email)!!
+        val user = userRepository.findByEmail(request.email).first()
         if (passwordEncoder.matches(request.password, user.password)) {
             return securityTokenService.generateToken(user)
         }
