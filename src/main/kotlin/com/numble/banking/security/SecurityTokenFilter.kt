@@ -22,11 +22,8 @@ class SecurityTokenFilter(
         val authorizationHeader = request.getHeader("Authorization")
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             val token = authorizationHeader.substring(7)
-            println(token)
             val userEmail = securityTokenService.getUsername(token)
-            println(userEmail)
             val userDetails = customUserDetailsService.loadUserByUsername(userEmail)
-            println(userDetails)
 
             if (securityTokenService.isTokenValid(token, userDetails)) {
                 val authToken = UsernamePasswordAuthenticationToken(

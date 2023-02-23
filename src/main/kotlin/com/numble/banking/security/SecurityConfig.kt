@@ -1,5 +1,6 @@
 package com.numble.banking.security
 
+import com.numble.banking.error.ExceptionHandlerFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     private val securityTokenFilter: SecurityTokenFilter,
     private val authenticationProvider: AuthenticationProvider,
+    private val exceptionHandlerFilter: ExceptionHandlerFilter,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -32,6 +34,7 @@ class SecurityConfig(
             .and()
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(securityTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(exceptionHandlerFilter, SecurityTokenFilter::class.java)
 
         return http.build()
     }

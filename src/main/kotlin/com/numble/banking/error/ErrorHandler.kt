@@ -1,12 +1,23 @@
 package com.numble.banking.error
 
+import io.jsonwebtoken.UnsupportedJwtException
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class ErrorHandler {
+    @ExceptionHandler(RuntimeException::class)
+    fun handleException(e: RuntimeException): ErrorResponse {
+        val response = ErrorResponse()
+        response.code = "INTERNAL_SERVER_ERROR"
+        response.message = "서버에 오류가 발생했습니다."
+        response.details = e.message
+        return response
+    }
+
     @ExceptionHandler(ApiException::class)
     fun handleCustomException(e: ApiException): ErrorResponse {
         val response = ErrorResponse()
@@ -31,6 +42,16 @@ class ErrorHandler {
         response.code = "BAD_REQUEST"
         response.message = e.bindingResult.allErrors[0].defaultMessage
         response.details = e.detailMessageArguments
+        return response
+    }
+
+    @ExceptionHandler(UnsupportedJwtException::class)
+    @ResponseStatus(org.springframework.http.HttpStatus.UNAUTHORIZED)
+    fun handleSignatureException(e: UnsupportedJwtException): ErrorResponse {
+        val response = ErrorResponse()
+        response.code = "INVALID_TOKEN"
+        response.message = "유효하지 않은 토큰입니다."
+        response.details = e.message
         return response
     }
 }

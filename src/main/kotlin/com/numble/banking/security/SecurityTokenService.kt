@@ -6,12 +6,12 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.*
 import java.util.function.Function
 
-@Service
+@Component
 class SecurityTokenService {
     fun generateToken(userDetails: UserDetails): String {
         val claims = Jwts.claims().setSubject(userDetails.username)
@@ -54,7 +54,8 @@ class SecurityTokenService {
     }
 
     private fun getSignInKey(): Key {
-        val keyBytes = Decoders.BASE64.decode("SECRETKESECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYY")
+        val keyBytes =
+            Decoders.BASE64.decode("SECRETKESECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYSECRETKEYY")
         return Keys.hmacShaKeyFor(keyBytes)
     }
 }
