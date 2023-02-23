@@ -1,6 +1,7 @@
 package com.numble.banking.common
 
-import com.numble.banking.user.UserRepository
+import com.numble.banking.user.User
+import com.numble.banking.user.Users
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -11,13 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
-class ApplicationConfig(
-    private val userRepository: UserRepository,
-) {
+class ApplicationConfig{
     @Bean
     fun userDetailService(): UserDetailsService? {
         return UserDetailsService { email ->
-            userRepository.findByEmail(email).firstOrNull()
+            User.find { Users.email eq email }.firstOrNull()
                 ?: throw UsernameNotFoundException("User not found")
         }
     }

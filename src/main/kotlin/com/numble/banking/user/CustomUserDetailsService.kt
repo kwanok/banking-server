@@ -1,15 +1,18 @@
 package com.numble.banking.user
 
+import com.numble.banking.error.ApiException
+import com.numble.banking.error.ErrorCode
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 @Service
-class CustomUserDetailsService(
-    private val userRepository: UserRepository,
-): UserDetailsService {
+class CustomUserDetailsService: UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
-        return userRepository.findByEmail(username).first()
+        return transaction {
+            User.find { Users.email eq username }.firstOrNull() ?: throw ApiException(ErrorCode.USER_NOT_FOUND)
+        }
     }
 
 }

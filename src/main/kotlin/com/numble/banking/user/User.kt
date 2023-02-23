@@ -1,48 +1,30 @@
 package com.numble.banking.user
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 
-@Entity
-class User(
-    @Id @GeneratedValue private var id: Long = 0,
-    private var name: String,
-    private var email: String,
-    private var password: String,
-    private var expired: Boolean = false,
-    private var locked: Boolean = false,
-) : UserDetails {
+class User(id: EntityID<Long>) : LongEntity(id), UserDetails {
+    companion object : LongEntityClass<User>(Users)
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return mutableListOf(SimpleGrantedAuthority("ROLE_USER"))
-    }
+    var name by Users.name
+    var email by Users.email
 
-    override fun getPassword(): String {
-        return password
-    }
+    @get:JvmName("getPassword1") var password by Users.password
+    var expired by Users.expired
+    var locked by Users.locked
 
-    override fun getUsername(): String {
-        return email
-    }
+    override fun getUsername(): String = email
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
+        mutableListOf(SimpleGrantedAuthority("ROLE_USER"))
 
-    override fun isAccountNonExpired(): Boolean {
-        return !expired
-    }
-
-    override fun isAccountNonLocked(): Boolean {
-        return !locked
-    }
-
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
-
-    override fun isEnabled(): Boolean {
-        return true
-    }
+    override fun getPassword() = password
+    override fun isAccountNonExpired(): Boolean = !expired
+    override fun isAccountNonLocked(): Boolean = !locked
+    override fun isCredentialsNonExpired(): Boolean = true
+    override fun isEnabled(): Boolean = true
 }

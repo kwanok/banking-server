@@ -1,18 +1,28 @@
 package com.numble.banking.user
 
+import com.numble.banking.database.DB
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class UserTest {
     @Test
     fun testNewUser() {
-        val user = User(
-            id = 1,
-            name = "Test User",
-            email = "test@example.com",
-            password = "password",
-        )
+        Database.connect(DB.db)
 
-        assertEquals("password", user.password)
+        transaction {
+            SchemaUtils.create(Users)
+
+            val user = User.new {
+                email = "test@example.com"
+                password = "password"
+                name = "Test User"
+            }
+
+            assertEquals("password", user.getPassword())
+        }
+
     }
 }

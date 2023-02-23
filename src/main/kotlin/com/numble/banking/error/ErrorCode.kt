@@ -8,4 +8,6 @@ enum class ErrorCode(
     ACCESS_DENIED(403, "Access denied"),
     UNAUTHORIZED(401, "Unauthorized"),
 
+    USER_NOT_FOUND(404, "User not found"),
+
 }
