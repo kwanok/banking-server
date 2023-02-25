@@ -1,7 +1,7 @@
 package com.numble.banking.common
 
 import com.numble.banking.user.User
-import com.numble.banking.user.Users
+import com.numble.banking.user.dsl.Users
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider

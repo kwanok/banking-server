@@ -1,6 +1,7 @@
 package com.numble.banking.user
 
 import com.numble.banking.database.DB
+import com.numble.banking.user.dsl.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction

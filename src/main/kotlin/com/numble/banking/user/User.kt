@@ -1,5 +1,7 @@
 package com.numble.banking.user
 
+import com.numble.banking.friend.dsl.Friends
+import com.numble.banking.user.dsl.Users
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -14,9 +16,12 @@ class User(id: EntityID<Long>) : LongEntity(id), UserDetails {
     var name by Users.name
     var email by Users.email
 
-    @get:JvmName("getPassword1") var password by Users.password
+    @get:JvmName("getPassword1")
+    var password by Users.password
     var expired by Users.expired
     var locked by Users.locked
+
+    var friends by User.via(Friends.sender, Friends.receiver)
 
     override fun getUsername(): String = email
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =

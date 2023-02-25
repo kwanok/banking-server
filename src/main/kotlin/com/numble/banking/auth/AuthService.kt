@@ -4,11 +4,7 @@ import com.numble.banking.auth.dto.LoginRequest
 import com.numble.banking.auth.dto.RegisterRequest
 import com.numble.banking.security.SecurityTokenService
 import com.numble.banking.user.User
-import com.numble.banking.user.Users
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import com.numble.banking.user.dsl.Users
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
