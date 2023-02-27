@@ -4,6 +4,7 @@ import com.numble.banking.account.dto.AccountCreateRequest
 import com.numble.banking.account.dto.AccountResponse
 import com.numble.banking.account.service.AccountService
 import com.numble.banking.user.User
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -14,7 +15,7 @@ class AccountController(
     val accountService: AccountService,
 ) {
     @PostMapping
-    fun create(@AuthenticationPrincipal user: User, @RequestBody request: AccountCreateRequest): ResponseEntity<Void> {
+    fun create(@AuthenticationPrincipal user: User, @Valid @RequestBody request: AccountCreateRequest): ResponseEntity<Void> {
         return accountService.create(request, user)
     }
 

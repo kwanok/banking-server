@@ -4,6 +4,9 @@ import com.numble.banking.account.Account
 import com.numble.banking.account.dsl.Accounts
 import com.numble.banking.account.dto.AccountCreateRequest
 import com.numble.banking.account.dto.AccountResponse
+import com.numble.banking.account.util.AccountUtil
+import com.numble.banking.error.ApiException
+import com.numble.banking.error.ErrorCode
 import com.numble.banking.user.User
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -14,9 +17,15 @@ import org.springframework.stereotype.Service
 class AccountService {
     fun create(request: AccountCreateRequest, user: User): ResponseEntity<Void> {
         transaction {
+            val accountCount = Account.find { Accounts.user eq user.id }.count()
+            if (accountCount >= 5) {
+                throw ApiException(ErrorCode.ACCOUNT_LIMIT_EXCEEDED)
+            }
+
             Account.new {
                 name = request.name
-                balance = request.balance
+                balance = 0.0
+                number = AccountUtil.generateAccountNumber()
                 this.user = user
             }
         }
@@ -25,7 +34,6 @@ class AccountService {
     }
 
     fun get(user: User): ResponseEntity<List<AccountResponse>> {
-
         val accounts = transaction {
             Account.find { Accounts.user eq user.id }.map {
                 AccountResponse(it)
@@ -46,7 +54,4 @@ class AccountService {
             ResponseEntity.notFound().build()
         }
     }
-
-
-
 }
