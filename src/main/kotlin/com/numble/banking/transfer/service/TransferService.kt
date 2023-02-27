@@ -21,25 +21,27 @@ class TransferService {
         request.validate()
 
         val account = transaction {
-            Account.findById(request.senderId) ?: throw ApiException(ErrorCode.USER_NOT_FOUND)
-        }
+            Account.find { Accounts.number eq request.sendAccountNumber }.firstOrNull()
+        } ?: throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        if (account.user != user) {
+        if (transaction { account.user }.id != user.id) {
             throw ApiException(ErrorCode.ACCESS_DENIED)
         }
 
-        if (account.balance < request.amount) {
+        if (transaction { account.balance } < request.amount) {
             throw ApiException(ErrorCode.INSUFFICIENT_BALANCE)
         }
 
         transaction {
-            val accounts = Account.find { (Accounts.id eq request.senderId) or (Accounts.id eq request.receiverId) }.toList()
+            val accounts =
+                Account.find { (Accounts.number eq request.sendAccountNumber) or (Accounts.number eq request.receiveAccountNumber) }
+                    .toList()
             if (accounts.size != 2) {
                 throw ApiException(ErrorCode.USER_NOT_FOUND)
             }
 
-            val sender = accounts.find { it.id.value == request.senderId }!!
-            val receiver = accounts.find { it.id.value == request.receiverId }!!
+            val sender = accounts.find { it.number == request.sendAccountNumber }!!
+            val receiver = accounts.find { it.number == request.receiveAccountNumber }!!
 
             Transfer.new {
                 this.sender = sender.id
@@ -51,8 +53,6 @@ class TransferService {
 
             sender.balance -= request.amount
             receiver.balance += request.amount
-
-            commit()
         }
     }
 }
