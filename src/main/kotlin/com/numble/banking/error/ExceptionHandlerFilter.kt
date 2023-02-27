@@ -4,10 +4,12 @@ import io.jsonwebtoken.security.SignatureException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import lombok.extern.slf4j.Slf4j
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
+@Slf4j
 class ExceptionHandlerFilter: OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -18,6 +20,7 @@ class ExceptionHandlerFilter: OncePerRequestFilter() {
             filterChain.doFilter(request, response)
         }
         catch (e: SignatureException) {
+            logger.error("Internal server error", e)
             response.contentType = "application/json;charset=UTF-8"
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             response.writer.write(
@@ -28,6 +31,7 @@ class ExceptionHandlerFilter: OncePerRequestFilter() {
             )
         }
         catch (e: Exception) {
+            logger.error("Internal server error", e)
             response.contentType = "application/json;charset=UTF-8"
             response.status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR
             response.writer.write(
