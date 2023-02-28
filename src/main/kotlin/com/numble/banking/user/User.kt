@@ -1,5 +1,7 @@
 package com.numble.banking.user
 
+import com.numble.banking.account.Account
+import com.numble.banking.account.dsl.Accounts
 import com.numble.banking.database.base.BaseEntity
 import com.numble.banking.database.base.BaseEntityClass
 import com.numble.banking.friend.dsl.Friends
@@ -22,6 +24,8 @@ class User(id: EntityID<Long>) : BaseEntity(id, Users), UserDetails {
     var locked by Users.locked
 
     var friends by User.via(Friends.sender, Friends.receiver)
+
+    val accounts by Account referrersOn Accounts.user
 
     override fun getUsername(): String = email
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =

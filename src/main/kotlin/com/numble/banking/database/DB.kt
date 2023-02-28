@@ -1,18 +1,24 @@
 package com.numble.banking.database
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
-import javax.sql.DataSource
-object DB {
-    val db: DataSource = connect()
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
-    private fun connect(): DataSource {
-        val config = HikariConfig()
-        config.jdbcUrl = "jdbc:mysql://localhost:3306/banking-db"
-        config.username = "db_user"
-        config.password = "eZkRv7nG786pcyr3"
-        config.driverClassName = "com.mysql.cj.jdbc.Driver"
-
-        return HikariDataSource(config)
+@Configuration
+@ConfigurationProperties(prefix = "spring.datasource")
+data class DB(
+    var url: String = "",
+    var username: String = "",
+    var password: String = "",
+    var driverClassName: String = "",
+) {
+    @Bean
+    fun db() {
+        Database.connect(url, driver = driverClassName, user = username, password = password)
+        transaction {
+            Schema().init()
+        }
     }
 }

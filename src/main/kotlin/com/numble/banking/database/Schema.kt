@@ -15,4 +15,13 @@ class Schema {
             Transfers,
         )
     }
+
+    fun drop() {
+        SchemaUtils.drop(
+            Users,
+            Accounts,
+            Friends,
+            Transfers,
+        )
+    }
 }
