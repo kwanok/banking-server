@@ -43,6 +43,11 @@ class TransferService {
             val sender = accounts.find { it.number == request.sendAccountNumber }!!
             val receiver = accounts.find { it.number == request.receiveAccountNumber }!!
 
+            val isFriend = sender.user.friends.any { it.id == receiver.user.id }
+            if (!isFriend) {
+                throw ApiException(ErrorCode.NOT_FRIEND)
+            }
+
             Transfer.new {
                 this.sender = sender.id
                 this.receiver = receiver.id
