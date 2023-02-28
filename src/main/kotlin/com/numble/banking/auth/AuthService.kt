@@ -17,6 +17,10 @@ class AuthService(
     fun register(request: RegisterRequest): String {
         return securityTokenService.generateToken(
             transaction {
+                if (User.find { Users.email eq request.email }.count() > 0) {
+                    throw Exception("User already exists")
+                }
+
                 User.new {
                     name = request.name
                     email = request.email
