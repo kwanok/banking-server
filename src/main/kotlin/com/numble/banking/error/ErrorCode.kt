@@ -16,6 +16,9 @@ enum class ErrorCode(
     SENDER_RECEIVER_SAME(400, "Sender and receiver are the same"),
     INSUFFICIENT_BALANCE(400, "Insufficient balance"),
     ACCOUNT_LIMIT_EXCEEDED(400, "Account limit exceeded"),
+
+    ALREADY_FRIEND(409, "Already friend"),
+    INVALID_FRIEND_REQUEST(400, "Invalid friend request"),
     ;
 
 
