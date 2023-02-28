@@ -3,11 +3,14 @@ package com.numble.banking.transfer.service
 import com.numble.banking.account.Account
 import com.numble.banking.database.Schema
 import com.numble.banking.error.ApiException
+import com.numble.banking.friend.dsl.Friends
 import com.numble.banking.mock.AccountFixture
 import com.numble.banking.transfer.dto.TransferCreateRequest
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -17,6 +20,13 @@ import org.springframework.test.context.ActiveProfiles
 class TransferServiceTest {
     private val transferService: TransferService = TransferService()
 
+    @BeforeEach
+    fun setUp() {
+        transaction {
+            Schema().init()
+        }
+    }
+
     @AfterEach
     fun tearDown() {
         transaction {
@@ -25,11 +35,16 @@ class TransferServiceTest {
     }
 
     @Test
-    fun `transfer`() {
+    fun transfer() {
         val accountA = AccountFixture.createAccount()
         val accountB = AccountFixture.createAccount()
 
         transaction {
+            Friends.insert {
+                it[sender] = accountA.user.id
+                it[receiver] = accountB.user.id
+            }
+
             accountA.balance = 10000.0
             accountB.balance = 10000.0
         }
@@ -58,6 +73,11 @@ class TransferServiceTest {
         val accountB = AccountFixture.createAccount()
 
         transaction {
+            Friends.insert {
+                it[sender] = accountA.user.id
+                it[receiver] = accountB.user.id
+            }
+
             accountA.balance = 10000.0
             accountB.balance = 10000.0
         }
@@ -91,6 +111,11 @@ class TransferServiceTest {
         val accountB = AccountFixture.createAccount()
 
         transaction {
+            Friends.insert {
+                it[sender] = accountA.user.id
+                it[receiver] = accountB.user.id
+            }
+
             accountA.balance = 10000.0
             accountB.balance = 10000.0
         }
@@ -124,6 +149,11 @@ class TransferServiceTest {
         val accountB = AccountFixture.createAccount()
 
         transaction {
+            Friends.insert {
+                it[sender] = accountA.user.id
+                it[receiver] = accountB.user.id
+            }
+
             accountA.balance = 10000.0
             accountB.balance = 10000.0
         }
@@ -151,4 +181,36 @@ class TransferServiceTest {
         }
     }
 
+    @Test
+    fun `transfer to not friend`() {
+        val accountA = AccountFixture.createAccount()
+        val accountB = AccountFixture.createAccount()
+
+        transaction {
+            accountA.balance = 10000.0
+            accountB.balance = 10000.0
+        }
+
+        val userA = transaction {
+            accountA.user
+        }
+
+        try {
+            transferService.transfer(
+                userA, TransferCreateRequest(
+                    accountA.number,
+                    accountB.number,
+                    1000.0
+                )
+            )
+        } catch (e: ApiException) {
+            assertEquals(403, e.code.status)
+            assertEquals("Not friend", e.code.message)
+        }
+
+        transaction {
+            assertEquals(10000.0, Account.findById(accountA.id.value)!!.balance)
+            assertEquals(10000.0, Account.findById(accountB.id.value)!!.balance)
+        }
+    }
 }
