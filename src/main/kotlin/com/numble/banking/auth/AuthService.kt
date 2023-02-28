@@ -2,6 +2,8 @@ package com.numble.banking.auth
 
 import com.numble.banking.auth.dto.LoginRequest
 import com.numble.banking.auth.dto.RegisterRequest
+import com.numble.banking.error.ApiException
+import com.numble.banking.error.ErrorCode
 import com.numble.banking.security.SecurityTokenService
 import com.numble.banking.user.User
 import com.numble.banking.user.dsl.Users
@@ -33,13 +35,17 @@ class AuthService(
     }
 
     fun login(request: LoginRequest): String {
-        val user = User.find { Users.email eq request.email }.first()
+        println(request)
+
+        val user = transaction {
+            User.find { Users.email eq request.email }.firstOrNull()
+        } ?: throw ApiException(ErrorCode.USER_NOT_FOUND)
 
         if (passwordEncoder.matches(request.password, user.password)) {
             return securityTokenService.generateToken(user)
         }
 
-        throw Exception("Invalid credentials")
+        throw ApiException(ErrorCode.PASSWORD_WRONG)
     }
 
 }

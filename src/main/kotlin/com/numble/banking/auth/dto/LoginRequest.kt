@@ -3,7 +3,7 @@ package com.numble.banking.auth.dto
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
-class LoginRequest (
+data class LoginRequest (
     @field:NotBlank(message = "Email is required")
     @field:Email(message = "Email is invalid")
     val email: String,

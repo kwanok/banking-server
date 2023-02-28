@@ -20,7 +20,8 @@ enum class ErrorCode(
     ALREADY_FRIEND(409, "Already friend"),
     INVALID_FRIEND_REQUEST(400, "Invalid friend request"),
 
-    NOT_FRIEND(403, "Not friend")
+    NOT_FRIEND(403, "Not friend"),
+    PASSWORD_WRONG(400, "Password wrong"),
     ;
 
 
