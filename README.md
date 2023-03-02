@@ -21,14 +21,16 @@
 
 ```
 git clone <repository>
-cd ./banking-server/infra && SEED_ENABLED=true docker-compose up
+cd ./banking-server && ./gradlew build
+cd ./infra && SEED_ENABLED=true docker-compose up
 ```
 
 ### 없는 버전
 
 ```
 git clone <repository>
-cd ./banking-server/infra && SEED_ENABLED=false docker-compose up
+cd ./banking-server && ./gradlew build
+cd ./infra && SEED_ENABLED=true docker-compose up
 ```
 
 ## 프로젝트 소개
