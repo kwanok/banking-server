@@ -1,5 +1,6 @@
 package com.numble.banking.auth
 
+import com.numble.banking.auth.dto.AuthResponse
 import com.numble.banking.auth.dto.LoginRequest
 import com.numble.banking.auth.dto.RegisterRequest
 import com.numble.banking.error.ApiException
@@ -16,25 +17,26 @@ class AuthService(
     var securityTokenService: SecurityTokenService,
     var passwordEncoder: PasswordEncoder,
 ) {
-    fun register(request: RegisterRequest): String {
-        return securityTokenService.generateToken(
-            transaction {
-                if (User.find { Users.email eq request.email }.count() > 0) {
-                    throw Exception("User already exists")
-                }
+    fun register(request: RegisterRequest): AuthResponse {
+        return AuthResponse(
+            token = securityTokenService.generateToken(
+                transaction {
+                    if (User.find { Users.email eq request.email }.count() > 0) {
+                        throw ApiException(ErrorCode.EMAIL_ALREADY_EXISTS)
+                    }
 
-                User.new {
-                    name = request.name
-                    email = request.email
-                    password = passwordEncoder.encode(request.password)
-                    expired = false
-                    locked = false
-                }
-            }
+                    User.new {
+                        name = request.name
+                        email = request.email
+                        password = passwordEncoder.encode(request.password)
+                        expired = false
+                        locked = false
+                    }
+                })
         )
     }
 
-    fun login(request: LoginRequest): String {
+    fun login(request: LoginRequest): AuthResponse {
         println(request)
 
         val user = transaction {
@@ -42,7 +44,9 @@ class AuthService(
         } ?: throw ApiException(ErrorCode.USER_NOT_FOUND)
 
         if (passwordEncoder.matches(request.password, user.password)) {
-            return securityTokenService.generateToken(user)
+            return AuthResponse(
+                token = securityTokenService.generateToken(user)
+            )
         }
 
         throw ApiException(ErrorCode.PASSWORD_WRONG)

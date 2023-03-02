@@ -1,5 +1,6 @@
 package com.numble.banking.auth
 
+import com.numble.banking.auth.dto.AuthResponse
 import com.numble.banking.auth.dto.LoginRequest
 import com.numble.banking.auth.dto.RegisterRequest
 import jakarta.validation.Valid
@@ -17,12 +18,12 @@ class AuthController(
     private val authService: AuthService,
 ) {
     @PostMapping("/register")
-    fun register(@Valid @RequestBody request: RegisterRequest): ResponseEntity<String> {
+    fun register(@Valid @RequestBody request: RegisterRequest): ResponseEntity<AuthResponse> {
         return ResponseEntity.ok(authService.register(request))
     }
 
     @PostMapping("/login")
-    fun login(@Valid @RequestBody request: LoginRequest): ResponseEntity<String> {
+    fun login(@Valid @RequestBody request: LoginRequest): ResponseEntity<AuthResponse> {
         return ResponseEntity.ok(authService.login(request))
     }
 }
