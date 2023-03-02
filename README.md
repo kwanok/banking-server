@@ -17,9 +17,18 @@
 - git
 - docker compose
 
+### 기본 데이터 있는 버전
+
 ```
 git clone <repository>
-cd ./banking-server/infra && docker-compose up
+cd ./banking-server/infra && SEED_ENABLED=true docker-compose up
+```
+
+### 없는 버전
+
+```
+git clone <repository>
+cd ./banking-server/infra && SEED_ENABLED=false docker-compose up
 ```
 
 ## 프로젝트 소개
