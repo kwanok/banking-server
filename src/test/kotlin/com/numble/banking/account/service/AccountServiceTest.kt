@@ -19,6 +19,9 @@ class AccountServiceTest {
 
     @BeforeEach
     fun setup() {
+        transaction {
+            Schema().init()
+        }
     }
 
     @AfterEach
