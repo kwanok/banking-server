@@ -5,6 +5,7 @@ import com.numble.banking.database.Schema
 import com.numble.banking.error.ApiException
 import com.numble.banking.friend.dsl.Friends
 import com.numble.banking.mock.AccountFixture
+import com.numble.banking.notification.NotificationService
 import com.numble.banking.transfer.dto.TransferCreateRequest
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -18,7 +19,9 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest
 @ActiveProfiles("test")
 class TransferServiceTest {
-    private val transferService: TransferService = TransferService()
+    private val transferService: TransferService = TransferService(
+        NotificationService()
+    )
 
     @BeforeEach
     fun setUp() {

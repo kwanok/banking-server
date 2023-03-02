@@ -4,6 +4,7 @@ import com.numble.banking.account.Account
 import com.numble.banking.account.dsl.Accounts
 import com.numble.banking.error.ApiException
 import com.numble.banking.error.ErrorCode
+import com.numble.banking.notification.NotificationService
 import com.numble.banking.transfer.Transfer
 import com.numble.banking.transfer.dsl.TransferStatus
 import com.numble.banking.transfer.dto.TransferCreateRequest
@@ -13,7 +14,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Service
 
 @Service
-class TransferService {
+class TransferService(
+    val notificationService: NotificationService
+) {
     fun transfer(
         user: User,
         request: TransferCreateRequest,
@@ -32,7 +35,7 @@ class TransferService {
             throw ApiException(ErrorCode.INSUFFICIENT_BALANCE)
         }
 
-        transaction {
+        val transfer = transaction {
             val accounts =
                 Account.find { (Accounts.number eq request.sendAccountNumber) or (Accounts.number eq request.receiveAccountNumber) }
                     .toList()
@@ -48,7 +51,7 @@ class TransferService {
                 throw ApiException(ErrorCode.NOT_FRIEND)
             }
 
-            Transfer.new {
+            val transfer = Transfer.new {
                 this.sender = sender.id
                 this.receiver = receiver.id
                 this.amount = request.amount.toBigDecimal()
@@ -58,6 +61,10 @@ class TransferService {
 
             sender.balance -= request.amount
             receiver.balance += request.amount
+
+            return@transaction transfer
         }
+
+        notificationService.sendNotification(transfer = transfer)
     }
 }
