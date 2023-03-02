@@ -10,6 +10,18 @@
 
 - https://documenter.getpostman.com/view/9693533/2s93CSoAfx
 
+## 서버 실행 방법
+
+### 준비물
+
+- git
+- docker compose
+
+```
+git clone <repository>
+cd ./banking-server/infra && docker-compose up
+```
+
 ## 프로젝트 소개
 
 ### kotlin
@@ -63,16 +75,4 @@
 - 장점: deprecated 안떠서 ide warning 창이 깨끗함
 - 단점: 인터넷에 잘 안나옴 (chat gpt도 잘 모름)
 
-
-## 서버 실행 방법
-
-### 준비물
-
-- git
-- docker compose
-
-```
-git clone <repository>
-cd ./banking-server/infra && docker-compose up
-```
 
