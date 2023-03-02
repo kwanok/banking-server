@@ -9,15 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class ErrorHandler {
-    @ExceptionHandler(RuntimeException::class)
-    fun handleException(e: RuntimeException): ErrorResponse {
-        val response = ErrorResponse()
-        response.code = "INTERNAL_SERVER_ERROR"
-        response.message = "서버에 오류가 발생했습니다."
-        response.details = e.message
-        return response
-    }
-
     @ExceptionHandler(ApiException::class)
     fun handleCustomException(e: ApiException): ErrorResponse {
         val response = ErrorResponse()

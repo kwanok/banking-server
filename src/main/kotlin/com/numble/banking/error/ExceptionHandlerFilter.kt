@@ -1,5 +1,6 @@
 package com.numble.banking.error
 
+import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.security.SignatureException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -21,6 +22,17 @@ class ExceptionHandlerFilter: OncePerRequestFilter() {
         }
         catch (e: SignatureException) {
             logger.error("Internal server error", e)
+            response.contentType = "application/json;charset=UTF-8"
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            response.writer.write(
+                ErrorResponse(
+                    ErrorCode.UNAUTHORIZED.name,
+                    "Invalid JWT token",
+                ).json()
+            )
+        }
+        catch (e: MalformedJwtException) {
+            logger.error("MalformedJwtException", e)
             response.contentType = "application/json;charset=UTF-8"
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             response.writer.write(
