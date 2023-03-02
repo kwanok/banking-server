@@ -1,5 +1,6 @@
 package com.numble.banking.database
 
+import com.numble.banking.database.seeder.Seeder
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -17,8 +18,15 @@ data class DB(
     @Bean
     fun db() {
         Database.connect(url, driver = driverClassName, user = username, password = password)
+        val seed: String = System.getenv("SEED_ENABLE") ?: "false"
+
+        println("SEED_ENABLE: $seed")
+
         transaction {
             Schema().init()
+            if (seed == "true") {
+                Seeder().seed()
+            }
         }
     }
 }

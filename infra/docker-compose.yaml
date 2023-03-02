@@ -15,6 +15,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banking-db
       SPRING_DATASOURCE_USERNAME: db_user
       SPRING_DATASOURCE_PASSWORD: eZkRv7nG786pcyr3
+      SEED_ENABLED: ${SEED_ENABLE}
   mysql:
     networks:
       - numble-banking-network
